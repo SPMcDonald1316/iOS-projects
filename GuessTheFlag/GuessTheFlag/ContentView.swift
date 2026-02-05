@@ -80,9 +80,6 @@ struct ContentView: View {
             score += 1
         } else {
             scoreTitle = "Incorrect. That's the flag of \(countries[number])"
-            if score > 0 {
-                score -= 1
-            }
         }
         if numOfQuestions == 8 {
             gameOver = true
