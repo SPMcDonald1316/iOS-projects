@@ -14,9 +14,9 @@ struct ContentView: View {
     @State private var cpuScore: Int = 0
     @State private var cpuChoice: String = "CPU"
     @State private var userChoice: String = "USER"
-    @State private var winner: String = ""
     @State private var alertResult: Bool = false
     @State private var isGameOver: Bool = false
+    @State private var alertMessage: String = ""
     
     var body: some View {
         NavigationStack {
@@ -60,10 +60,34 @@ struct ContentView: View {
                     .border(.primary)
                     .foregroundStyle(.primary)
                     .font(.largeTitle)
-                    .clipShape(.rect, cornerRadius: 5)
+                    .clipShape(.rect)
                 }
             }
             .padding()
+        }
+        .alert("\(alertMessage)", isPresented: $alertResult) {
+            Button("Next Round") {
+                roundNumber += 1
+                cpuChoice = "CPU"
+                userChoice = "USER"
+            }
+        }
+        .alert("Game Over", isPresented: $isGameOver) {
+            Button("Play Again?") {
+                roundNumber = 1
+                cpuScore = 0
+                userScore = 0
+                cpuChoice = "CPU"
+                userChoice = "USER"
+            }
+        } message: {
+            if userScore > cpuScore {
+                Text("User Wins! \(userScore) : \(cpuScore)")
+            } else if userScore < cpuScore {
+                Text("CPU Wins! \(cpuScore) : \(userScore)")
+            } else {
+                Text("Game Tied.")
+            }
         }
     }
     
@@ -74,29 +98,29 @@ struct ContentView: View {
     
     func decideWinner(_ user: String, _ cpu: String) {
         if user == cpu {
-            winner = "Tie"
+            alertMessage = "Tie"
         } else if user == "Rock" {
             if cpu == "Paper" {
-                winner = "CPU"
+                alertMessage = "CPU Wins!"
                 cpuScore += 1
             } else {
-                winner = "User"
+                alertMessage = "User Wins!"
                 userScore += 1
             }
         } else if user == "Paper" {
             if cpu == "Scissors" {
-                winner = "CPU"
+                alertMessage = "CPU Wins!"
                 cpuScore += 1
             } else {
-                winner = "User"
+                alertMessage = "User Wins!"
                 userScore += 1
             }
         } else {
             if cpu == "Rock" {
-                winner = "CPU"
+                alertMessage = "CPU Wins!"
                 cpuScore += 1
             } else {
-                winner = "User"
+                alertMessage = "User Wins!"
                 userScore += 1
             }
         }
@@ -106,16 +130,3 @@ struct ContentView: View {
 #Preview {
     ContentView()
 }
-
-/*
- Rock, Paper, Scissors Game
- - Layout
-    - Title display Round <Round Number>:
-    - Two dashed border squares with text inside User / CPU
-    - Score for each below the square
-    - Three buttons below with choices Rock, Paper, Scissors
- - When user makes choice:
-    - Their
-    - CPU picks random choice, and cpu square replaced with image of their choice
-    - Make winner decision or tie, update appropriate score
- */
