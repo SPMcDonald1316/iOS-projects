@@ -9,18 +9,24 @@ import CoreML
 import SwiftUI
 
 struct ContentView: View {
-    @State private var wakeUp = Date.now
+    @State private var wakeUp = defaultWakeTime
     @State private var sleepAmount = 8.0
     @State private var coffeeAmount = 1
     @State private var alertTitle = ""
     @State private var alertMessage = ""
     @State private var showingAlert = false
     
+    static var defaultWakeTime: Date {
+        var components = DateComponents()
+        components.hour = 7
+        components.minute = 0
+        return Calendar.current.date(from: components) ?? .now
+    }
+    
     var body: some View {
         NavigationStack {
-            VStack {
-                Spacer()
-                Section {
+            Form {
+                VStack(alignment: .leading, spacing: 0) {
                     Text("When do you want to wake up?")
                         .font(.headline)
                     DatePicker(
@@ -29,26 +35,19 @@ struct ContentView: View {
                         displayedComponents: .hourAndMinute
                     )
                     .labelsHidden()
-                    .padding(EdgeInsets(top: 5, leading: 0, bottom: 10, trailing: 0))
                 }
-                Spacer()
-                Section {
+                VStack(alignment: .leading, spacing: 0) {
                     Text("Desired amount of sleep")
                         .font(.headline)
                     
                     Stepper("\(sleepAmount.formatted()) hours", value: $sleepAmount, in: 4...12, step: 0.25)
-                        .padding(EdgeInsets(top: 5, leading: 100, bottom: 5, trailing: 100))
                 }
-                Spacer()
-                Section {
+                VStack(alignment: .leading, spacing: 0) {
                     Text("Daily coffee intake")
                         .font(.headline)
                     
-                    Stepper("\(coffeeAmount) cup(s)", value: $coffeeAmount, in: 1...20)
-                        .padding(EdgeInsets(top: 5, leading: 100, bottom: 5, trailing: 100))
+                    Stepper("^[\(coffeeAmount) cup](inflect: true)", value: $coffeeAmount, in: 1...20)
                 }
-                Spacer()
-                Spacer()
             }
             .navigationTitle("BetterRest")
             .toolbar {
