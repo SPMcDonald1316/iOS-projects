@@ -23,6 +23,7 @@ struct ContentView: View {
     @State private var scoreTitle = ""
     @State private var score = 0
     @State private var numOfQuestions = 0
+    @State private var degrees = [0.0, 0.0, 0.0]
     
     @State private var countries = ["Estonia", "France", "Germany", "Ireland", "Italy", "Nigeria", "Poland", "Spain", "UK", "Ukraine", "US"].shuffled()
     @State private var correctAnswer = Int.random(in: 0...2)
@@ -51,6 +52,11 @@ struct ContentView: View {
                         } label: {
                             FlagImage(imageStr: countries[number])
                         }
+                        .rotation3DEffect(
+                            .degrees(degrees[number]),
+                            axis: (x: 0, y: 1, z: 0)
+                        )
+                        .animation(.easeInOut(duration: 1.0), value: degrees[number])
                     }
                 }
                 .frame(maxWidth: 350)
@@ -82,6 +88,7 @@ struct ContentView: View {
     }
     
     func flagTapped(_ number: Int) {
+        degrees[number] += 360
         numOfQuestions += 1
         if number == correctAnswer {
             scoreTitle = "Correct"
