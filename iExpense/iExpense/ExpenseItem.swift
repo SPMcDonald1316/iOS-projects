@@ -4,8 +4,10 @@
 //
 //  Created by Sean McDonald on 3/25/26.
 //
+import Foundation
 
-struct ExpenseItem {
+struct ExpenseItem: Identifiable {
+    let id = UUID()
     let name: String
     let type: String
     let amount: Double
