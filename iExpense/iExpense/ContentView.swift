@@ -14,19 +14,42 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             List {
-                ForEach(expenses.items) {item in
-                    HStack {
-                        VStack(alignment: .leading) {
-                            Text(item.name)
-                                .font(.headline)
-                            Text(item.type)
-                        }
-                        
-                        Spacer()
-                        Text(item.amount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
+                Section("Personal Expenses") {
+                    ForEach(expenses.personalItems) {item in
+                            HStack {
+                                VStack(alignment: .leading) {
+                                    Text(item.name)
+                                        .font(.headline)
+                                    Text(item.type)
+                                }
+                                
+                                Spacer()
+                                Text(item.amount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
+                            }
+                    }
+                    .onDelete { offsets in
+                        removeItems(at: offsets, in: expenses.personalItems)
                     }
                 }
-                .onDelete(perform: removeItems)
+                
+                Section("Business Expenses") {
+                    ForEach(expenses.businessItems) {item in
+                            HStack {
+                                VStack(alignment: .leading) {
+                                    Text(item.name)
+                                        .font(.headline)
+                                    Text(item.type)
+                                }
+                                
+                                Spacer()
+                                Text(item.amount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
+                            }
+                    }
+                    .onDelete { offsets in
+                        removeItems(at: offsets, in: expenses.businessItems)
+                    }
+                }
+                
             }
             .navigationTitle("iExpense")
             .toolbar {
@@ -40,8 +63,10 @@ struct ContentView: View {
         }
     }
     
-    func removeItems(at offsets: IndexSet) {
-        expenses.items.remove(atOffsets: offsets)
+    func removeItems(at offsets: IndexSet, in filteredArray: [ExpenseItem]) {
+        for index in offsets {
+            expenses.items.removeAll(where: {$0.id == filteredArray[index].id})
+        }
     }
 }
 
