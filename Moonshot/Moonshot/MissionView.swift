@@ -11,7 +11,7 @@ struct MissionView: View {
     let mission: Mission
     let crew: [CrewMember]
     
-    struct CrewMember {
+    struct CrewMember: Hashable {
         let role: String
         let astronaut: Astronaut
     }
