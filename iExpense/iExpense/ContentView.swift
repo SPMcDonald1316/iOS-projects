@@ -9,7 +9,6 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var expenses = Expenses()
-    @State private var showingAddExpense = false
     
     var body: some View {
         NavigationStack {
@@ -49,14 +48,16 @@ struct ContentView: View {
                         removeItems(at: offsets, in: expenses.businessItems)
                     }
                 }
-                
-                NavigationLink("Add Expense") {
-                    AddView(expenses: expenses)
-                        .navigationBarBackButtonHidden()
-                }
-                
             }
             .navigationTitle("iExpense")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    NavigationLink("Add Expense") {
+                        AddView(expenses: expenses)
+                            .navigationBarBackButtonHidden()
+                    }
+                }
+            }
         }
     }
     

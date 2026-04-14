@@ -17,8 +17,7 @@ struct AddView: View {
     let types = ["Business", "Personal"]
     
     var body: some View {
-        NavigationStack {
-            Form {
+        Form {
                 TextField("Name", text: $name)
                 
                 Picker("Type", selection: $type) {
@@ -47,7 +46,6 @@ struct AddView: View {
                 }
             }
         }
-    }
 }
 
 #Preview {
