@@ -24,4 +24,9 @@ class Order {
     }
     var extraFrosting = false
     var addSprinkles = false
+    
+    var name = ""
+    var streetAddress = ""
+    var city = ""
+    var zip = ""
 }
