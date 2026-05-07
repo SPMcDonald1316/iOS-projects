@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct CheckoutView: View {
-    @State private var confimationMessage = ""
+    @State private var message = ""
     @State private var showingConfirmation = false
+    @State private var showingError = false
     var order: Order
     
     var body: some View {
@@ -41,7 +42,12 @@ struct CheckoutView: View {
         .alert("Thank you!", isPresented: $showingConfirmation) {
             Button("OK") {}
         } message: {
-            Text(confimationMessage)
+            Text(message)
+        }
+        .alert("Error", isPresented: $showingError) {
+            Button("OK") {}
+        } message: {
+            Text(message)
         }
     }
     
@@ -60,10 +66,12 @@ struct CheckoutView: View {
             let (data, _) = try await URLSession.shared.upload(for: request, from: encoded)
             print(String(data: data, encoding: .utf8) ?? "Invalid response")
             let decodedOrder = try JSONDecoder().decode(Order.self, from: data)
-            confimationMessage = "Your order for \(decodedOrder.quantity)x \(Order.types[decodedOrder.type].lowercased()) cupcakes is on its way!"
+            message = "Your order for \(decodedOrder.quantity)x \(Order.types[decodedOrder.type].lowercased()) cupcakes is on its way!"
             showingConfirmation = true
         } catch {
+            message = error.localizedDescription
             print("Checkout failed: \(error.localizedDescription)")
+            showingError = true
         }
     }
 }
