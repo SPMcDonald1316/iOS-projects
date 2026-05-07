@@ -37,10 +37,43 @@ class Order: Codable {
     var extraFrosting = false
     var addSprinkles = false
     
-    var name = ""
-    var streetAddress = ""
-    var city = ""
-    var zip = ""
+    var name = "" {
+        didSet {
+            UserDefaults.standard.set(name, forKey: "name")
+        }
+    }
+    var streetAddress = "" {
+        didSet {
+            UserDefaults.standard.set(streetAddress, forKey: "streetAddress")
+        }
+    }
+    var city = "" {
+        didSet {
+            UserDefaults.standard.set(city, forKey: "city")
+        }
+    }
+    var zip = "" {
+        didSet {
+            UserDefaults.standard.set(zip, forKey: "zip")
+        }
+    }
+    
+    init() {
+        if let name = UserDefaults.standard.string(forKey: "name") {
+            self.name = name
+        }
+        if let streetAddress = UserDefaults.standard.string(forKey: "streetAddress") {
+            self.streetAddress = streetAddress
+        }
+        
+        if let city = UserDefaults.standard.string(forKey: "city") {
+            self.city = city
+        }
+        
+        if let zip = UserDefaults.standard.string(forKey: "zip") {
+            self.zip = zip
+        }
+    }
     
     var hasValidAdress: Bool {
         if name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
