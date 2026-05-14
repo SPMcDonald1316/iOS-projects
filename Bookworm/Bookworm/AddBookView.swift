@@ -10,6 +10,7 @@ import SwiftData
 
 struct AddBookView: View {
     @Environment(\.modelContext) var modelContext
+    @Environment(\.dismiss) var dismiss
     @State private var title = ""
     @State private var author = ""
     @State private var genre = "Fantasy"
@@ -52,6 +53,8 @@ struct AddBookView: View {
                             rating: rating
                         )
                         modelContext.insert(newBook)
+                        print("Book saved")
+                        dismiss()
                     }
                 }
             }
