@@ -31,6 +31,7 @@ struct ContentView: View {
                             }
                         }
                     }
+                    .background(book.rating == 1 ? .red.opacity(0.4) : .white)
                 }
                 .onDelete(perform: deleteBooks)
             }
