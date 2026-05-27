@@ -5,10 +5,17 @@
 //  Created by Sean McDonald on 3/25/26.
 //
 import Foundation
+import SwiftData
 
-struct ExpenseItem: Identifiable, Codable {
-    var id = UUID()
-    let name: String
-    let type: String
-    let amount: Double
+@Model
+class ExpenseItem {
+    var name: String
+    var type: String
+    var amount: Double
+    
+    init(name: String, type: String, amount: Double) {
+        self.name = name
+        self.type = type
+        self.amount = amount
+    }
 }

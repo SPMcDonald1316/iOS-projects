@@ -6,54 +6,39 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ContentView: View {
-    @State private var expenses = Expenses()
+    @Environment(\.modelContext) var modelContext
+    @Query var expenses: [ExpenseItem]
     
     var body: some View {
         NavigationStack {
             List {
-                Section("Personal Expenses") {
-                    ForEach(expenses.personalItems) {item in
+                    ForEach(expenses) {expense in
                             HStack {
                                 VStack(alignment: .leading) {
-                                    Text(item.name)
+                                    Text(expense.name)
                                         .font(.headline)
-                                    Text(item.type)
+                                    Text(expense.type)
                                 }
                                 
                                 Spacer()
-                                Text(item.amount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
+                                Text(
+                                    expense.amount,
+                                    format: .currency(
+                                        code: Locale.current.currency?.identifier ?? "USD"
+                                    )
+                                )
                             }
                     }
-                    .onDelete { offsets in
-                        removeItems(at: offsets, in: expenses.personalItems)
-                    }
-                }
-                
-                Section("Business Expenses") {
-                    ForEach(expenses.businessItems) {item in
-                            HStack {
-                                VStack(alignment: .leading) {
-                                    Text(item.name)
-                                        .font(.headline)
-                                    Text(item.type)
-                                }
-                                
-                                Spacer()
-                                Text(item.amount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
-                            }
-                    }
-                    .onDelete { offsets in
-                        removeItems(at: offsets, in: expenses.businessItems)
-                    }
-                }
+                    .onDelete(perform: removeItems)
             }
             .navigationTitle("iExpense")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     NavigationLink("Add Expense") {
-                        AddView(expenses: expenses)
+                        AddView()
                             .navigationBarBackButtonHidden()
                     }
                 }
@@ -61,9 +46,10 @@ struct ContentView: View {
         }
     }
     
-    func removeItems(at offsets: IndexSet, in filteredArray: [ExpenseItem]) {
-        for index in offsets {
-            expenses.items.removeAll(where: {$0.id == filteredArray[index].id})
+    func removeItems(at offsets: IndexSet) {
+        for offset in offsets {
+            let expense = expenses[offset]
+            modelContext.delete(expense)
         }
     }
 }
