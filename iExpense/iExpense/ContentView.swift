@@ -9,47 +9,49 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-    @Environment(\.modelContext) var modelContext
-    @Query var expenses: [ExpenseItem]
+    let filterOptions = ["All", "Personal", "Business"]
+    @State private var filter = "All"
+    @State private var sortOrder = [
+        SortDescriptor(\ExpenseItem.name),
+        SortDescriptor(\ExpenseItem.amount),
+    ]
     
     var body: some View {
         NavigationStack {
-            List {
-                    ForEach(expenses) {expense in
-                            HStack {
-                                VStack(alignment: .leading) {
-                                    Text(expense.name)
-                                        .font(.headline)
-                                    Text(expense.type)
-                                }
-                                
-                                Spacer()
-                                Text(
-                                    expense.amount,
-                                    format: .currency(
-                                        code: Locale.current.currency?.identifier ?? "USD"
-                                    )
-                                )
+            ExpensesView(expenseFilter: filter, sortOrder: sortOrder)
+                .navigationTitle("iExpense")
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        NavigationLink("Add Expense") {
+                            AddView()
+                                .navigationBarBackButtonHidden()
+                        }
+                    }
+                    
+                    ToolbarItem {
+                        Picker("Sort", selection: $sortOrder) {
+                            Text("Sort by Name")
+                                .tag([
+                                    SortDescriptor(\ExpenseItem.name),
+                                    SortDescriptor(\ExpenseItem.amount),
+                                ])
+                            Text("Sort by Amount")
+                                .tag([
+                                    SortDescriptor(\ExpenseItem.amount),
+                                    SortDescriptor(\ExpenseItem.name),
+                                ])
+                        }
+                    }
+                    
+                    ToolbarItem {
+                        Picker("Filter", selection: $filter) {
+                            ForEach(filterOptions, id: \.self) {
+                                Text($0)
                             }
+                        }
                     }
-                    .onDelete(perform: removeItems)
-            }
-            .navigationTitle("iExpense")
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    NavigationLink("Add Expense") {
-                        AddView()
-                            .navigationBarBackButtonHidden()
-                    }
+                    
                 }
-            }
-        }
-    }
-    
-    func removeItems(at offsets: IndexSet) {
-        for offset in offsets {
-            let expense = expenses[offset]
-            modelContext.delete(expense)
         }
     }
 }
