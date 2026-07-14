@@ -8,11 +8,16 @@
 import CoreImage
 import CoreImage.CIFilterBuiltins
 import PhotosUI
+import StoreKit
 import SwiftUI
 
 struct ContentView: View {
+    @AppStorage("filterCount") var filterCount = 0
+    @Environment(\.requestReview) var requestReview
     @State private var processedImage: Image?
     @State private var filterIntensity = 0.5
+    @State private var filterRadius = 0.5
+    @State private var filterScale = 0.5
     @State private var selectedItem: PhotosPickerItem?
     @State private var currentFilter: CIFilter = CIFilter.sepiaTone()
     @State private var showingFilters = false
@@ -41,14 +46,28 @@ struct ContentView: View {
                 Spacer()
                 
                 HStack {
-                    Text("Intensity")
-                    Slider(value: $filterIntensity)
-                        .onChange(of: filterIntensity, applyProcessing)
+                    VStack {
+                        Text("Intensity")
+                        Slider(value: $filterIntensity)
+                            .onChange(of: filterIntensity, applyProcessing)
+                            .disabled(processedImage == nil || !currentFilter.inputKeys.contains(kCIInputIntensityKey))
+                        
+                        Text("Radius")
+                        Slider(value: $filterRadius)
+                            .onChange(of: filterRadius, applyProcessing)
+                            .disabled(processedImage == nil || !currentFilter.inputKeys.contains(kCIInputRadiusKey))
+                        
+                        Text("Scale")
+                        Slider(value: $filterScale)
+                            .onChange(of: filterScale, applyProcessing)
+                            .disabled(processedImage == nil || !currentFilter.inputKeys.contains(kCIInputScaleKey))
+                    }
                 }
                 .padding(.vertical)
                 
                 HStack {
                     Button("Change Filter", action: changeFilter)
+                        .disabled(processedImage == nil)
                     
                     Spacer()
                     
@@ -70,6 +89,7 @@ struct ContentView: View {
                 Button("Sepia Tone") { setFilter(CIFilter.sepiaTone()) }
                 Button("Unsharp Mask") { setFilter(CIFilter.unsharpMask()) }
                 Button("Vignette") { setFilter(CIFilter.vignette()) }
+                Button("Comic") { setFilter(CIFilter.comicEffect())}
                 Button("Cancel", role: .cancel) { }
             }
         }
@@ -77,7 +97,16 @@ struct ContentView: View {
     
     func setFilter(_ filter: CIFilter) {
         currentFilter = filter
+        filterIntensity = 0.5
+        filterRadius = 0.5
+        filterScale = 0.5
         loadImage()
+        
+        filterCount += 1
+        
+        if filterCount >= 3 {
+            requestReview()
+        }
     }
     
     func changeFilter() {
@@ -102,10 +131,10 @@ struct ContentView: View {
             currentFilter.setValue(filterIntensity, forKey: kCIInputIntensityKey)
         }
         if inputKeys.contains(kCIInputRadiusKey) {
-            currentFilter.setValue(filterIntensity * 200, forKey: kCIInputRadiusKey)
+            currentFilter.setValue(filterRadius * 200, forKey: kCIInputRadiusKey)
         }
         if inputKeys.contains(kCIInputScaleKey) {
-            currentFilter.setValue(filterIntensity * 10, forKey: kCIInputScaleKey)
+            currentFilter.setValue(filterScale * 10, forKey: kCIInputScaleKey)
         }
         
         guard let outputImage = currentFilter.outputImage else { return }
