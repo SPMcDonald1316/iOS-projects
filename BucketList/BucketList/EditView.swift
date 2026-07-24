@@ -30,8 +30,15 @@ struct EditView: View {
             }
         }
     }
+    
+    init(location: Location) {
+        self.location = location
+        
+        _name = State(initialValue: location.name)
+        _description = State(initialValue: location.description)
+    }
 }
 
 #Preview {
-    EditView()
+    EditView(location: .example)
 }
