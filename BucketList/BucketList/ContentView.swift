@@ -15,13 +15,12 @@ struct ContentView: View {
             span: MKCoordinateSpan(latitudeDelta: 10, longitudeDelta: 10)
         )
     )
-    @State private var locations = [Location]()
-    @State private var selectedPlace: Location?
+    @State private var viewModel = ViewModel()
     
     var body: some View {
         MapReader { proxy in
             Map(initialPosition: startPosition) {
-                ForEach(locations) { location in
+                ForEach(viewModel.locations) { location in
                     Annotation(location.name, coordinate: location.coordinate) {
                         Image(systemName: "star.circle")
                             .resizable()
@@ -41,13 +40,13 @@ struct ContentView: View {
                         latitude: coordinate.latitude,
                         longitude: coordinate.longitude
                     )
-                    locations.append(newLocation)
+                    viewModel.locations.append(newLocation)
                 }
             }
-            .sheet(item: $selectedPlace) { place in
+            .sheet(item: $viewModel.selectedPlace) { place in
                 EditView(location: place) { newLocation in
-                    if let index = locations.firstIndex(of: place) {
-                        locations[index] = newLocation
+                    if let index = viewModel.locations.firstIndex(of: place) {
+                        viewModel.locations[index] = newLocation
                     }
                 }
             }
