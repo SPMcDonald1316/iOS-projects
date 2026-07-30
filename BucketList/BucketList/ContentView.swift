@@ -16,6 +16,7 @@ struct ContentView: View {
         )
     )
     @State private var viewModel = ViewModel()
+    @State private var isHybrid = false
     
     var body: some View {
         if viewModel.isUnlocked {
@@ -29,9 +30,13 @@ struct ContentView: View {
                                 .frame(width: 44, height: 44)
                                 .background(.white)
                                 .clipShape(.circle)
+                                .onLongPressGesture {
+                                    viewModel.selectedPlace = location
+                                }
                         }
                     }
                 }
+                .mapStyle(isHybrid ? .hybrid : .standard)
                 .onTapGesture { position in
                     if let coordinate = proxy.convert(position, from: .local) {
                         viewModel.addLocation(at: coordinate)
@@ -43,12 +48,20 @@ struct ContentView: View {
                     }
                 }
             }
+            
+            Spacer()
+            
+            Toggle("Hybrid Map", isOn: $isHybrid)
+                .padding(.horizontal)
+            
         } else {
             Button("Unlock Places", action: viewModel.authenticate)
                 .padding()
                 .background(.blue)
                 .foregroundStyle(.white)
                 .clipShape(.capsule)
+                .alert("No matching Face ID", isPresented: $viewModel.errorBiometricFail) {}
+                .alert("No Biometrics", isPresented: $viewModel.errorNoBiometrics) {}
         }
     }
 }

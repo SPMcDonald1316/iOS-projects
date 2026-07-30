@@ -17,6 +17,8 @@ extension ContentView {
         private(set) var locations: [Location]
         var selectedPlace: Location?
         var isUnlocked = false
+        var errorBiometricFail = false
+        var errorNoBiometrics = false
         
         init() {
             do {
@@ -72,11 +74,11 @@ extension ContentView {
                         if success {
                             self.isUnlocked = true
                         } else {
-                            // error
+                            self.errorBiometricFail = true
                         }
                     }
             } else {
-                // no biometrics
+                errorNoBiometrics = true
             }
         }
     }
