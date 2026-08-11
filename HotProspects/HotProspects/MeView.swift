@@ -61,6 +61,7 @@ struct MeView: View {
     func updateCode() {
         qrCode = generateQRCode(from: "\(name)\n\(emailAddress)")
     }
+    
 }
 
 #Preview {
