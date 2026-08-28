@@ -7,6 +7,18 @@
 
 import SwiftUI
 
+struct WelcomeView: View {
+    var body: some View {
+        VStack {
+            Text("Welcome to SnowSeeker!")
+                .font(.largeTitle)
+            
+            Text("Please select a resort from the lefr-hand menu; swipe from the left edge to show it.")
+                .foregroundStyle(.secondary)
+        }
+    }
+}
+
 struct ContentView: View {
     let resorts: [Resort] = Bundle.main.decode("resorts.json")
     
@@ -36,7 +48,7 @@ struct ContentView: View {
             }
             .navigationTitle("Resorts")
         } detail: {
-            Text("Detail")
+            WelcomeView()
         }
     }
 }
