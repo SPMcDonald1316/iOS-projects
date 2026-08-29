@@ -13,7 +13,7 @@ struct WelcomeView: View {
             Text("Welcome to SnowSeeker!")
                 .font(.largeTitle)
             
-            Text("Please select a resort from the lefr-hand menu; swipe from the left edge to show it.")
+            Text("Please select a resort from the left-hand menu; swipe from the left edge to show it.")
                 .foregroundStyle(.secondary)
         }
     }
@@ -21,10 +21,19 @@ struct WelcomeView: View {
 
 struct ContentView: View {
     let resorts: [Resort] = Bundle.main.decode("resorts.json")
+    @State private var searchText = ""
+    
+    var filteredResorts: [Resort] {
+        if searchText.isEmpty {
+            resorts
+        } else {
+            resorts.filter { $0.name.localizedStandardContains(searchText) }
+        }
+    }
     
     var body: some View {
         NavigationSplitView {
-            List(resorts) { resort in
+            List(filteredResorts) { resort in
                 NavigationLink(value: resort) {
                     HStack {
                         Image(resort.country)
@@ -50,6 +59,7 @@ struct ContentView: View {
             .navigationDestination(for: Resort.self) { resort in
                 ResortView(resort: resort)
             }
+            .searchable(text: $searchText, prompt: "Search for a resort")
         } detail: {
             WelcomeView()
         }
