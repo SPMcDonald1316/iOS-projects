@@ -22,6 +22,7 @@ struct WelcomeView: View {
 struct ContentView: View {
     let resorts: [Resort] = Bundle.main.decode("resorts.json")
     @State private var searchText = ""
+    @State private var favorites = Favorites()
     
     var filteredResorts: [Resort] {
         if searchText.isEmpty {
@@ -52,6 +53,13 @@ struct ContentView: View {
                             Text("\(resort.runs) runs")
                                 .foregroundStyle(.secondary)
                         }
+                        
+                        if favorites.contains(resort) {
+                            Spacer()
+                            Image(systemName: "heart.fill")
+                                .accessibilityLabel("This is a favorite resort")
+                                .foregroundStyle(.red)
+                        }
                     }
                 }
             }
@@ -63,6 +71,7 @@ struct ContentView: View {
         } detail: {
             WelcomeView()
         }
+        .environment(favorites)
     }
 }
 
